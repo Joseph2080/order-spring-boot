@@ -1,0 +1,24 @@
+version: '3'
+services:
+  order-database:
+    container_name: order-database
+    image: mongo:4.4
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: NixJavaCourse2025
+      MONGO_INITDB_DATABASE: orders_db
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+    volumes:
+      - ./src/main/resources/mongo/init.js:/docker-entrypoint-initdb.d/init.js
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo order-database:27017/orders_db
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge

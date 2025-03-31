@@ -1,0 +1,7 @@
+{
+  "customerId": "replace with uuid from server",
+  "items": [
+    {"productName": "Supreme Box Logo Hoodie", "quantity": 1, "price": 200.00},
+    {"productName": "Sony PlayStation 5", "quantity": 1, "price": 499.99}
+  ]
+}

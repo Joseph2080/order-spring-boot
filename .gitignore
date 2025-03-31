@@ -1,0 +1,76 @@
+
+### Maven ###
+/target/
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+.m2/repository/
+
+### Gradle ###
+.gradle/
+/build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+*.gradle
+gradle-app.setting
+
+### STS (Spring Tool Suite) ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+.nb-gradle/
+
+### Eclipse ###
+.classpath
+.project
+.settings/
+.metadata/
+.recommenders/
+
+### VS Code ###
+.vscode/
+
+### OS Files ###
+.DS_Store
+Thumbs.db
+
+### Logs and Temp Files ###
+logs/
+*.log
+*.tmp
+*.swp
+*.swo
+
+### Node Modules (if applicable) ###
+node_modules/
+
+### Coverage and Reports ###
+/coverage/
+/jacoco.exec
+/test-results/
+/reports/
+
+### Misc ###
+*.bak
+*.orig
+
+# Ignore application.properties in the resources directory
+src/main/resources/application.properties
