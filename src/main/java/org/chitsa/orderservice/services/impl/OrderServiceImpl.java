@@ -18,6 +18,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+    private static final String ORDERS_NOT_FOUND_MESSAGE = "Orders not found";
+    private static final String UNAUTHORIZED_DELETE_MESSAGE = "You are not authorized to delete this order";
+
     private final OrderRepo orderRepo;
     private final OrderDtoMapper orderDtoMapper;
     private final OrderValidator orderValidator;
@@ -39,7 +42,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderResponseDto> findOrdersByCustomerId(String customerId) {
         return orderRepo.findOrdersByCustomerId(customerId)
-                .orElseThrow(() -> new OrderNotFoundException("orders not found"))
+                .orElseThrow(() -> new OrderNotFoundException(ORDERS_NOT_FOUND_MESSAGE))
                 .stream()
                 .map(orderDtoMapper::toOrderResponseDto)
                 .collect(Collectors.toList());
@@ -60,8 +63,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void deleteOrder(String id, String customerId) {
         Order order = findByOrderIdOrElseThrowException(id);
-        if(!order.getCustomerId().equals(customerId)) {
-            throw new UnauthorizedException("You are not authorized to delete this order");
+        if (!order.getCustomerId().equals(customerId)) {
+            throw new UnauthorizedException(UNAUTHORIZED_DELETE_MESSAGE);
         }
         orderRepo.delete(order);
     }

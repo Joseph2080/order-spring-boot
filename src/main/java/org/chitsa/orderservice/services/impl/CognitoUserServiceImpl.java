@@ -15,16 +15,22 @@ import com.amazonaws.services.cognitoidp.model.MessageActionType;
 import com.amazonaws.services.cognitoidp.model.UserType;
 import com.amazonaws.services.cognitoidp.model.UserNotFoundException;
 import com.amazonaws.services.cognitoidp.model.InvalidPasswordException;
+import com.amazonaws.services.cognitoidp.model.InvalidParameterException;
 import com.amazonaws.services.cognitoidp.model.AWSCognitoIdentityProviderException;
 import com.amazonaws.services.cognitoidp.model.AuthFlowType;
 import org.chitsa.orderservice.dto.LoginRequestDto;
 import org.chitsa.orderservice.dto.UserRegisterDto;
 import org.chitsa.orderservice.exception.AuthenticationException;
+import org.chitsa.orderservice.exception.CustomerNotFoundException;
 import org.chitsa.orderservice.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -49,10 +55,12 @@ public class CognitoUserServiceImpl implements UserService {
     private static final String SECRET_HASH = "SECRET_HASH";
     private static final String USERNAME = "USERNAME";
     private static final String PASSWORD = "PASSWORD";
-    private static final String ERROR_COGNITO_REQUEST = "Error while processing request to Cognito";
+    private static final String ERROR_COGNITO_REQUEST = "Error while processing request";
     private static final String ERROR_INVALID_USER_ID = "Invalid user ID.";
     private static final String ERROR_INVALID_CREDENTIALS = "Invalid username or password.";
     private static final String ERROR_PASSWORD_POLICY = "Password does not conform with the password policy.";
+    private static final String ERROR_INVALID_PARAMETER = "One or more parameters are invalid.";
+    private static final String ERROR_CREATING_SECRET_HASH = "Error creating secret hash";
 
     @Autowired
     public CognitoUserServiceImpl(AWSCognitoIdentityProvider cognitoClient) {
@@ -79,8 +87,10 @@ public class CognitoUserServiceImpl implements UserService {
             return uniqueUsername;
         } catch (InvalidPasswordException ex) {
             throw new IllegalArgumentException(ERROR_PASSWORD_POLICY, ex);
+        } catch (InvalidParameterException ex) {
+            throw new IllegalArgumentException(ERROR_INVALID_PARAMETER, ex);
         } catch (AWSCognitoIdentityProviderException ex) {
-            throw new IllegalArgumentException(ERROR_COGNITO_REQUEST, ex);
+            throw new RuntimeException(ERROR_COGNITO_REQUEST, ex);
         }
     }
 
@@ -112,8 +122,8 @@ public class CognitoUserServiceImpl implements UserService {
             cognitoClient.adminDeleteUser(new AdminDeleteUserRequest()
                     .withUserPoolId(cognitoUserPoolId)
                     .withUsername(username));
-        } catch (UserNotFoundException e) {
-            throw new UserNotFoundException(ERROR_INVALID_USER_ID);
+        } catch (UserNotFoundException userNotFoundException) {
+            throw new CustomerNotFoundException(ERROR_INVALID_USER_ID, userNotFoundException);
         } catch (Exception ex) {
             throw new RuntimeException(ERROR_COGNITO_REQUEST, ex);
         }
@@ -144,7 +154,7 @@ public class CognitoUserServiceImpl implements UserService {
             authParameters.put(USERNAME, username);
             authParameters.put(PASSWORD, loginRequestDto.getPassword());
             authParameters.put(SECRET_HASH,
-                    CryptoUtil.calculateSecretHash(
+                    calculateSecretHash(
                             cognitoClientId,
                             cognitoClientSecret,
                             username
@@ -177,6 +187,22 @@ public class CognitoUserServiceImpl implements UserService {
             return true;
         } catch (UserNotFoundException e) {
             return false;
+        }
+    }
+
+    private String calculateSecretHash(String userPoolClientId, String userPoolClientSecret, String username) {
+        try {
+            final String HMAC_SHA256_ALGORITHM = "HmacSHA256";
+            Mac mac = Mac.getInstance(HMAC_SHA256_ALGORITHM);
+            mac.init(new SecretKeySpec(
+                    userPoolClientSecret.getBytes(StandardCharsets.UTF_8),
+                    HMAC_SHA256_ALGORITHM
+            ));
+            mac.update(username.getBytes(StandardCharsets.UTF_8));
+            byte[] hmacResult = mac.doFinal(userPoolClientId.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(hmacResult);
+        } catch (Exception e) {
+            throw new RuntimeException(ERROR_CREATING_SECRET_HASH, e);
         }
     }
 }
