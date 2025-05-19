@@ -17,23 +17,23 @@ public class OrderValidator {
     private static final String ERROR_PRICE_NOT_POSITIVE = "Price must be greater than 0.";
 
     public void validateOrderRequest(OrderRequestDto orderRequestDto, String customerId) {
-        validateNotNull(orderRequestDto, ERROR_ORDER_REQUEST_NULL);
+        validateNotNull(orderRequestDto);
         validateNotEmpty(customerId, ERROR_CUSTOMER_ID_EMPTY);
-        validateNotEmpty(orderRequestDto.getItems(), ERROR_ORDER_ITEMS_EMPTY);
+        validateNotEmpty(orderRequestDto.getItems());
         validateOrderItems(orderRequestDto.getItems());
     }
 
     private void validateOrderItems(List<OrderItemDto> orderItemList) {
         for (OrderItemDto item : orderItemList) {
             validateNotEmpty(item.getProductName(), ERROR_PRODUCT_NAME_EMPTY);
-            validatePositive(item.getQuantity(), ERROR_QUANTITY_NOT_POSITIVE);
-            validatePositive(item.getPrice(), ERROR_PRICE_NOT_POSITIVE);
+            validatePositive(item.getQuantity());
+            validatePositive(item.getPrice());
         }
     }
 
-    private void validateNotNull(Object object, String message) {
+    private void validateNotNull(Object object) {
         if (object == null) {
-            throw new IllegalArgumentException(message);
+            throw new IllegalArgumentException(OrderValidator.ERROR_ORDER_REQUEST_NULL);
         }
     }
 
@@ -43,21 +43,21 @@ public class OrderValidator {
         }
     }
 
-    private void validateNotEmpty(List<?> list, String message) {
+    private void validateNotEmpty(List<?> list) {
         if (list == null || list.isEmpty()) {
-            throw new IllegalArgumentException(message);
+            throw new IllegalArgumentException(OrderValidator.ERROR_ORDER_ITEMS_EMPTY);
         }
     }
 
-    private void validatePositive(Double value, String message) {
+    private void validatePositive(Double value) {
         if (value == null || value <= 0) {
-            throw new IllegalArgumentException(message);
+            throw new IllegalArgumentException(OrderValidator.ERROR_PRICE_NOT_POSITIVE);
         }
     }
 
-    private void validatePositive(Integer value, String message) {
+    private void validatePositive(Integer value) {
         if (value == null || value <= 0) {
-            throw new IllegalArgumentException(message);
+            throw new IllegalArgumentException(OrderValidator.ERROR_QUANTITY_NOT_POSITIVE);
         }
     }
 }
