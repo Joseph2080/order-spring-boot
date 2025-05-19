@@ -14,29 +14,36 @@ public class OrderItemDto {
         this.price = price;
     }
 
-    public double getSubtotal() {
-        return price * quantity;
+    public Integer getQuantity() {
+        return quantity;
     }
 
     public String getProductName() {
         return productName;
     }
 
-    public Integer getQuantity() {
-        return quantity;
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     public Double getPrice() {
         return price;
     }
 
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
     @Override
     public String toString() {
-        return "OrderItemDTO{" +
+        return "OrderItemDto{" +
                 "productName='" + productName + '\'' +
                 ", quantity=" + quantity +
                 ", price=" + price +
-                ", subtotal=" + getSubtotal() +
                 '}';
     }
 }

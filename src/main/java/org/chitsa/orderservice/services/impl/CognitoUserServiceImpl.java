@@ -19,7 +19,6 @@ import com.amazonaws.services.cognitoidp.model.InvalidParameterException;
 import com.amazonaws.services.cognitoidp.model.AWSCognitoIdentityProviderException;
 import com.amazonaws.services.cognitoidp.model.AuthFlowType;
 import org.chitsa.orderservice.dto.LoginRequestDto;
-import org.chitsa.orderservice.dto.UserRegisterDto;
 import org.chitsa.orderservice.exception.AuthenticationException;
 import org.chitsa.orderservice.exception.CustomerNotFoundException;
 import org.chitsa.orderservice.services.UserService;
@@ -68,7 +67,7 @@ public class CognitoUserServiceImpl implements UserService {
     }
 
     @Override
-    public String createUser(UserRegisterDto userDto) {
+    public String createUser(LoginRequestDto.UserRegisterDto userDto) {
         String uniqueUsername = UNIQUE_USERNAME_PREFIX + UUID.randomUUID();
         try {
             cognitoClient.adminCreateUser(

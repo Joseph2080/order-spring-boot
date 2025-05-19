@@ -3,7 +3,6 @@ package org.chitsa.orderservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.chitsa.orderservice.dto.LoginRequestDto;
-import org.chitsa.orderservice.dto.UserRegisterDto;
 import org.chitsa.orderservice.exception.AuthenticationException;
 import org.chitsa.orderservice.services.UserService;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +25,7 @@ public class UserController {
 
     @PostMapping("/signUp")
     @Operation(summary = "Create a new user", description = "Creates a new user in the system")
-    public ResponseEntity<String> createUser(@RequestBody UserRegisterDto userDto) {
+    public ResponseEntity<String> createUser(@RequestBody LoginRequestDto.UserRegisterDto userDto) {
         try {
             String userId = userService.createUser(userDto);
             return ResponseEntity.ok("User created successfully with Username: " + userId);

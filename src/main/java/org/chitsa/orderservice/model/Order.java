@@ -14,7 +14,6 @@ public class Order {
     private List<OrderItem> items;
     private LocalDateTime createdAt;
 
-    // Constructors
     public Order() {
         createdAt = LocalDateTime.now();
     }
@@ -25,7 +24,6 @@ public class Order {
         createdAt = LocalDateTime.now();
     }
 
-    // Getters & Setters
     public String getId() {
         return id;
     }

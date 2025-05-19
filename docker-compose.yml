@@ -1,7 +1,7 @@
 version: '3'
 services:
   order-database:
-    container_name: order-database
+    container_name: chitsa-database
     image: mongo:4.4
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
@@ -14,7 +14,7 @@ services:
     volumes:
       - ./src/main/resources/mongo/init.js:/docker-entrypoint-initdb.d/init.js
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo order-database:27017/orders_db
+      test: echo 'db.runCommand("ping").ok' | mongo chitsa-database:27017/orders_db
       interval: 10s
       timeout: 5s
       retries: 5
